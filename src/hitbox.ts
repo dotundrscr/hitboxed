@@ -18,4 +18,8 @@ export abstract class Hitbox {
  * Entity Hitbox.
  * Should be used for Humanoids or parts that are supposed to take damage.
  */
-export class EntityHitbox extends Hitbox { }
+export class EntityHitbox extends Hitbox {
+  constructor(attachTo: BasePart, attachOffset: Vector3) {
+    super(attachTo, attachOffset);
+  }
+}
