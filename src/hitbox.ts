@@ -4,8 +4,8 @@
 /**
  * Base hitbox class.
  *
- * @param attachTo BasePart to attach the hitbox to.
- * @param attachOffset Hitbox's offset relative to the origin of `attachTo`
+ * @property attachTo BasePart to attach the hitbox to.
+ * @property attachOffset Hitbox's offset relative to the origin of `attachTo`
  */
 export abstract class Hitbox {
   attachTo: BasePart;
