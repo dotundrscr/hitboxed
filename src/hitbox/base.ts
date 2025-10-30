@@ -8,11 +8,17 @@
  * @property attachOffset Hitbox's offset relative to the origin of `attachTo`
  */
 export abstract class Hitbox {
-  attachTo: BasePart;
-  attachOffset: Vector3;
+	protected hitboxInstance: Part = new Instance("Part");
 
-  constructor(attachTo: BasePart, attachOffset: Vector3) {
-    this.attachTo = attachTo;
-    this.attachOffset = attachOffset;
-  }
+	attachTo: BasePart;
+	attachOffset: Vector3;
+
+	constructor(attachTo: BasePart, attachOffset: Vector3) {
+		this.attachTo = attachTo;
+		this.attachOffset = attachOffset;
+	}
+
+	getPosition(): Vector3 {
+		return this.hitboxInstance.Position;
+	}
 }
