@@ -7,7 +7,7 @@
 			"hitboxed": {
 				"$className": "Folder",
 				"lib": {
-					"$path": "out/"
+					"$path": "out/lib"
 				},
 				"include": {
 					"$path": "include",
@@ -17,6 +17,14 @@
 							"$path": "node_modules/@rbxts"
 						}
 					}
+				}
+			}
+		},
+		"ServerScriptService": {
+			"hitboxed": {
+				"$className": "Folder",
+				"lib": {
+					"$path": "out/server"
 				}
 			}
 		}
