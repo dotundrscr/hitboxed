@@ -85,6 +85,8 @@ export class EntityHitbox extends Hitbox {
 		hitboxInstance.Transparency = 0.5;
 		hitboxInstance.LocalTransparencyModifier = 1;
 
+		hitboxInstance.CollisionGroup = "hitboxed";
+
 		hitboxInstance.AddTag("hitboxed-entity");
 
 		return hitboxInstance;
