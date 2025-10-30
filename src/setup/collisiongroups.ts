@@ -3,7 +3,7 @@
 
 import { PhysicsService } from "@rbxts/services";
 
-function setupCollisionGroups() {
+export function setupCollisionGroups() {
 	print("hitboxed: setting up collision groups...");
 
 	const startTime = os.clock();
