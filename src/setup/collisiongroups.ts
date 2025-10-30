@@ -19,6 +19,6 @@ export function setupCollisionGroups() {
 	}
 
 	print(
-		`hitboxed: done setting up collisiong roups (${os.clock() - startTime})`,
+		`hitboxed: done setting up collision groups (took ${os.clock() - startTime})`,
 	);
 }
