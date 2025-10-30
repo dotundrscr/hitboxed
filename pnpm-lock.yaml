@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@rbxts/services':
+        specifier: ^1.6.0
+        version: 1.6.0
     devDependencies:
       '@rbxts/compiler-types':
         specifier: 3.0.0-types.0
@@ -116,6 +120,9 @@ packages:
 
   '@rbxts/compiler-types@3.0.0-types.0':
     resolution: {integrity: sha512-VGOHJPoL7+56NTatMGqQj3K7xWuzEV+aP4QD5vZiHu+bcff3kiTmtoadaF6NkJrmwfFAvbsd4Dg764ZjWNceag==}
+
+  '@rbxts/services@1.6.0':
+    resolution: {integrity: sha512-YH02E1/tGHeMXB0Mam8qPdAZa2fjQWdylEscSL4Zn0RIaQeByYImA2qUsXM3nBdhcyKHDwltzSznDKyCGfFEWA==}
 
   '@rbxts/types@1.0.887':
     resolution: {integrity: sha512-vhp4vIKEfl1TaBcKxBxU5dTFsVNqLkvefoF9pw/Epb+Jk9T+0g4SFQQtBdCu3UdZcBGK/PWk/IJeEyoRNDMkSw==}
@@ -851,6 +858,8 @@ snapshots:
   '@pkgr/core@0.2.9': {}
 
   '@rbxts/compiler-types@3.0.0-types.0': {}
+
+  '@rbxts/services@1.6.0': {}
 
   '@rbxts/types@1.0.887': {}
 
