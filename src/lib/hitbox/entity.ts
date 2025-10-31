@@ -46,6 +46,7 @@ export class EntityHitbox extends Hitbox {
 		hitboxInstance.CollisionGroup = "hitboxed";
 
 		hitboxInstance.AddTag("hitboxed-entity");
+		hitboxInstance.AddTag(`hitboxed-${this.getUuid()}`);
 
 		return hitboxInstance;
 	}
