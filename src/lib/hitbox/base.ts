@@ -13,7 +13,7 @@ export abstract class Hitbox {
 	protected attachmentInstance: Attachment = new Instance("Attachment");
 	protected constraint: RigidConstraint = new Instance("RigidConstraint");
 	protected hitboxInstance: Part = new Instance("Part");
-	protected uuid: string = HttpService.GenerateGUID();
+	protected uuid: string = HttpService.GenerateGUID(false);
 
 	attachTo: BasePart;
 	attachOffset: Vector3;
