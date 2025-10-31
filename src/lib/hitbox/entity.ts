@@ -21,6 +21,7 @@ export class EntityHitbox extends Hitbox {
 		this.size = size;
 		this.shape = shape;
 
+		this.hitboxInstance = this._createInstance();
 		this._attach();
 	}
 

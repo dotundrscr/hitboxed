@@ -10,7 +10,7 @@
 export abstract class Hitbox {
 	protected attachmentInstance: Attachment = new Instance("Attachment");
 	protected constraint: RigidConstraint = new Instance("RigidConstraint");
-	protected hitboxInstance: Part = this._createInstance();
+	protected hitboxInstance: Part = new Instance("Part");
 
 	attachTo: BasePart;
 	attachOffset: Vector3;
@@ -60,6 +60,4 @@ export abstract class Hitbox {
 		this.attachmentInstance = partAttachment;
 		this.constraint = constraint;
 	}
-
-	protected abstract _createInstance(): Part;
 }
