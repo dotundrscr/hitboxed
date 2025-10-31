@@ -8,7 +8,9 @@
  * @property attachOffset Hitbox's offset relative to the origin of `attachTo`
  */
 export abstract class Hitbox {
-	protected hitboxInstance: Part = new Instance("Part");
+	protected attachmentInstance: Attachment = new Instance("Attachment");
+	protected constraint: RigidConstraint = new Instance("RigidConstraint");
+	protected hitboxInstance: Part = this._createInstance();
 
 	attachTo: BasePart;
 	attachOffset: Vector3;
@@ -21,4 +23,43 @@ export abstract class Hitbox {
 	getPosition(): Vector3 {
 		return this.hitboxInstance.Position;
 	}
+
+	/**
+	 * Attach the Hitbox instance to `attachTo`.
+	 *
+	 * @protected DO NOT USE THIS FUNCTION DIRECTLY. This is a protected function in TypeScript, but still can be called in Luau.
+	 */
+	protected _attach() {
+		if (!this.attachTo) {
+			error("hitboxed: attachTo of a Hitbox is nil");
+		}
+
+		if (!this.attachTo.IsA("BasePart")) {
+			error(
+				`hitboxed: attachTo of a Hitbox is not a BasePart (attachTo = ${this.attachTo})`,
+			);
+		}
+
+		this.hitboxInstance.Parent = this.attachTo;
+
+		const partAttachment = new Instance("Attachment");
+		partAttachment.Name = "hitboxedAttachment";
+		partAttachment.Parent = this.attachTo;
+
+		const hitboxAttachment = new Instance("Attachment");
+		hitboxAttachment.Name = "hitboxedAttachment";
+		hitboxAttachment.Position = this.attachOffset;
+		hitboxAttachment.Parent = this.hitboxInstance;
+
+		const constraint = new Instance("RigidConstraint");
+		constraint.Name = "hitboxedConstraint";
+		constraint.Attachment0 = partAttachment;
+		constraint.Attachment1 = hitboxAttachment;
+		constraint.Parent = this.attachTo;
+
+		this.attachmentInstance = partAttachment;
+		this.constraint = constraint;
+	}
+
+	protected abstract _createInstance(): Part;
 }

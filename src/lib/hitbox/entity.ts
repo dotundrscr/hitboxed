@@ -8,9 +8,6 @@ import { Hitbox } from "./base";
  * Should be used for Humanoids or parts that are supposed to take damage.
  */
 export class EntityHitbox extends Hitbox {
-	protected attachmentInstance: Attachment = new Instance("Attachment");
-	protected constraint: RigidConstraint = new Instance("RigidConstraint");
-
 	size: Vector3;
 	shape: Enum.PartType;
 
@@ -25,46 +22,6 @@ export class EntityHitbox extends Hitbox {
 		this.shape = shape;
 
 		this._attach();
-	}
-
-	/**
-	 * Attach the Hitbox instance to `attachTo`.
-	 *
-	 * @protected DO NOT USE THIS FUNCTION DIRECTLY. This is a protected function in TypeScript, but still can be called in Luau.
-	 */
-	protected _attach() {
-		const hitboxInstance = this._createInstance();
-
-		if (!this.attachTo) {
-			error("hitboxed: attachTo of a Hitbox is nil");
-		}
-
-		if (!this.attachTo.IsA("BasePart")) {
-			error(
-				`hitboxed: attachTo of a Hitbox is not a BasePart (attachTo = ${this.attachTo})`,
-			);
-		}
-
-		hitboxInstance.Parent = this.attachTo;
-
-		const partAttachment = new Instance("Attachment");
-		partAttachment.Name = "hitboxedAttachment";
-		partAttachment.Parent = this.attachTo;
-
-		const hitboxAttachment = new Instance("Attachment");
-		hitboxAttachment.Name = "hitboxedAttachment";
-		hitboxAttachment.Position = this.attachOffset;
-		hitboxAttachment.Parent = hitboxInstance;
-
-		const constraint = new Instance("RigidConstraint");
-		constraint.Name = "hitboxedConstraint";
-		constraint.Attachment0 = partAttachment;
-		constraint.Attachment1 = hitboxAttachment;
-		constraint.Parent = this.attachTo;
-
-		this.hitboxInstance = hitboxInstance;
-		this.attachmentInstance = partAttachment;
-		this.constraint = constraint;
 	}
 
 	/**
