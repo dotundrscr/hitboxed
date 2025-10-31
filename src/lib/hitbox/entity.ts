@@ -14,10 +14,11 @@ export class EntityHitbox extends Hitbox {
 	constructor(
 		attachTo: BasePart,
 		attachOffset: Vector3,
+		hitscanOffset: Vector3,
 		size: Vector3,
 		shape: Enum.PartType,
 	) {
-		super(attachTo, attachOffset);
+		super(attachTo, attachOffset, hitscanOffset);
 		this.size = size;
 		this.shape = shape;
 

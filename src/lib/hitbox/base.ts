@@ -17,10 +17,16 @@ export abstract class Hitbox {
 
 	attachTo: BasePart;
 	attachOffset: Vector3;
+	hitscanOffset: Vector3;
 
-	constructor(attachTo: BasePart, attachOffset: Vector3) {
+	constructor(
+		attachTo: BasePart,
+		attachOffset: Vector3,
+		hitscanOffset: Vector3,
+	) {
 		this.attachTo = attachTo;
 		this.attachOffset = attachOffset;
+		this.hitscanOffset = hitscanOffset;
 	}
 
 	getPosition(): Vector3 {
