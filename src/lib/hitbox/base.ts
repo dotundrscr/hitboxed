@@ -29,12 +29,8 @@ export abstract class Hitbox {
 		this.hitscanOffset = hitscanOffset;
 	}
 
-	getPosition(): Vector3 {
-		return this.hitboxInstance.Position;
-	}
-
-	getRotation(): Vector3 {
-		return this.hitboxInstance.Rotation;
+	getCFrame(): CFrame {
+		return this.hitboxInstance.CFrame;
 	}
 
 	getUuid(): string {
