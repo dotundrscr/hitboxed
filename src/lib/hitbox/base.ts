@@ -33,6 +33,10 @@ export abstract class Hitbox {
 		return this.hitboxInstance.Position;
 	}
 
+	getRotation(): Vector3 {
+		return this.hitboxInstance.Rotation;
+	}
+
 	getUuid(): string {
 		return this.uuid;
 	}
