@@ -1,6 +1,8 @@
 // Copyright (c) 2025 dotundrscr. Licensed under BSD 3-Clause "New" or "Revised" License.
 // For full terms, refer to the LICENSE file in the repository, or the SPDX License List.
 
+import { HttpService } from "@rbxts/services";
+
 /**
  * Base hitbox class.
  *
@@ -11,6 +13,7 @@ export abstract class Hitbox {
 	protected attachmentInstance: Attachment = new Instance("Attachment");
 	protected constraint: RigidConstraint = new Instance("RigidConstraint");
 	protected hitboxInstance: Part = new Instance("Part");
+	protected uuid: string = HttpService.GenerateGUID();
 
 	attachTo: BasePart;
 	attachOffset: Vector3;
@@ -22,6 +25,10 @@ export abstract class Hitbox {
 
 	getPosition(): Vector3 {
 		return this.hitboxInstance.Position;
+	}
+
+	getUuid(): string {
+		return this.uuid;
 	}
 
 	/**
