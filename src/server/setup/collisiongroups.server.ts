@@ -15,11 +15,9 @@ PhysicsService.RegisterCollisionGroup("hitboxed");
 const collisionGroups = PhysicsService.GetRegisteredCollisionGroups();
 
 for (const group of collisionGroups) {
-	if (group.name !== "hitboxed") {
-		PhysicsService.CollisionGroupSetCollidable("hitboxed", group.name, false);
-	}
+  if (group.name !== "hitboxed") {
+    PhysicsService.CollisionGroupSetCollidable("hitboxed", group.name, false);
+  }
 }
 
-print(
-	`hitboxed: done setting up collision groups (took ${os.clock() - startTime})`,
-);
+print(`hitboxed: done setting up collision groups (took ${os.clock() - startTime})`);
