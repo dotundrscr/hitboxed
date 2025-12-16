@@ -49,9 +49,6 @@ export class HitscanAttack {
     if (!this.size) {
       hitscan = Workspace.Raycast(this.source.getCFrame().Position, finalDirection, hitscanParams);
     } else {
-      warn("hitboxed: blockcasts in hitscans are currently not implemented");
-      // TOOD: implement blockcasts
-
       hitscan = Workspace.Blockcast(this.source.getCFrame(), this.size, finalDirection, hitscanParams);
     }
 
