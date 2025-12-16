@@ -18,10 +18,6 @@
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:roblox-ts/recommended-legacy",
-		"plugin:prettier/recommended"
-	],
-	"rules": {
-		"prettier/prettier": "warn"
-	}
+		"plugin:roblox-ts/recommended-legacy"
+	]
 }
