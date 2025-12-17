@@ -11,8 +11,8 @@ export class EntityHitbox extends Hitbox {
   size: Vector3;
   shape: Enum.PartType;
 
-  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, size: Vector3, shape: Enum.PartType) {
-    super(attachTo, attachOffset, hitscanOffset);
+  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType) {
+    super(attachTo, attachOffset, hitscanOffset, owner);
     this.size = size;
     this.shape = shape;
 

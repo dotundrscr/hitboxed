@@ -3,7 +3,8 @@
 
 import { Hitbox } from "lib/hitbox/base";
 
-export let SaveLastNTicks = 10;
+// HOLY #### MURDER DRONES REFERENCE !!11?1!?!!1!??? -- dot
+export const SaveLastNTicks = 60;
 
 export class HitboxTickPositions {
   tick: number;

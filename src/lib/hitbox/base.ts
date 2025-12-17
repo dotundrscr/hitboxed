@@ -18,11 +18,13 @@ export abstract class Hitbox {
   attachTo: BasePart;
   attachOffset: Vector3;
   hitscanOffset: Vector3;
+  owner: Model;
 
-  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3) {
+  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model) {
     this.attachTo = attachTo;
     this.attachOffset = attachOffset;
     this.hitscanOffset = hitscanOffset;
+    this.owner = owner;
   }
 
   getCFrame(): CFrame {

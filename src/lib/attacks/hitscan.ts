@@ -1,10 +1,12 @@
 // Copyright (c) 2025 dotundrscr. Licensed under BSD 3-Clause "New" or "Revised" License.
 // For full terms, refer to the LICENSE file in the repository, or the SPDX License List.
 
-import { Workspace } from "@rbxts/services";
+import { CollectionService, Players, Workspace } from "@rbxts/services";
 import { EntityHitbox } from "../hitbox/entity";
+import { FindHitbox, GetPositionsNTicksBehind } from "lib/storage";
+import { ShadowHitbox } from "lib/hitbox/shadow";
 
-export type HitCallback = (hit: string[], by: string) => void;
+export type HitscanCallback = (hit: string[], by: string) => void;
 
 export class HitscanAttack {
   source: EntityHitbox;
@@ -12,7 +14,7 @@ export class HitscanAttack {
   size: Vector3 | undefined;
   length: number;
 
-  onHit: HitCallback;
+  hitscanFinished: HitscanCallback;
 
   compensateLag: boolean;
 
@@ -22,7 +24,7 @@ export class HitscanAttack {
     size: Vector3 | undefined,
     length: number,
 
-    onHit: HitCallback,
+    hitscanFinished: HitscanCallback,
 
     compensateLag: boolean = true,
   ) {
@@ -31,16 +33,63 @@ export class HitscanAttack {
     this.size = size;
     this.length = length;
 
-    this.onHit = onHit;
+    this.hitscanFinished = hitscanFinished;
 
     this.compensateLag = compensateLag;
   }
   scan(): string[] {
+	let offsetTicks = 0;
+	let tickProgress = 0;
+
+	if (this.compensateLag) {
+		const hitboxOwner = Players.GetPlayerFromCharacter(this.source.owner)
+
+		if (hitboxOwner) {
+      const networkPing = hitboxOwner.GetNetworkPing();
+
+      if (networkPing > 0.015) {
+        offsetTicks = math.floor(networkPing/(1/60));
+
+  			const remainder = networkPing % (1/60);
+		  	tickProgress = remainder / (1/60);
+      }
+		}
+	}
+
+	const offsetPositions = GetPositionsNTicksBehind(math.clamp(59-offsetTicks, 0, 59))
+	const offsetPlusOnePositions = GetPositionsNTicksBehind(math.clamp(59-offsetTicks+1, 0, 59))
+
+	for (const hitbox of offsetPositions) {
+		const plusOnePosition = offsetPlusOnePositions.get(hitbox[0])
+
+		if (!plusOnePosition) {
+			warn(`hitboxed: ${hitbox[0]} has invalid offset position`)
+			continue;
+		}
+
+		const resultPosition = hitbox[1].Lerp(plusOnePosition, tickProgress)
+
+		const hitboxInstance = FindHitbox(hitbox[0]);
+	
+		if (!hitboxInstance) {
+			warn(`hitboxed: ${hitbox[0]} is invalid`)
+			continue;
+		}
+
+		new ShadowHitbox(resultPosition, hitboxInstance as EntityHitbox);
+	}
+
     const finalDirection = this.direction.Unit.mul(this.length);
 
     const hitscanParams = new RaycastParams();
     hitscanParams.CollisionGroup = "hitboxed";
     hitscanParams.FilterType = Enum.RaycastFilterType.Exclude;
+
+    const sourceAssociatedHitboxes = CollectionService.GetTagged(`hitboxedUUID:${this.source.getUuid()}`);
+
+    for (const hitbox of sourceAssociatedHitboxes) {
+      hitscanParams.AddToFilter(hitbox)
+    }
 
     let hitscan;
 
@@ -48,24 +97,56 @@ export class HitscanAttack {
 
     if (!this.size) {
       hitscan = Workspace.Raycast(this.source.getCFrame().Position, finalDirection, hitscanParams);
+
+      while (hitscan) {
+        if (!hitscan) break;
+
+        const hitboxTags = hitscan.Instance.GetTags();
+
+        for (const tag of hitboxTags) {
+          const tagSplit = tag.split(":");
+
+          if (tagSplit[0] === "hitboxedUUID") {
+              hitHitboxes.push(tagSplit[1]);
+
+              const associatedHitboxes = CollectionService.GetTagged(`hitboxedUUID:${tagSplit[1]}`);
+
+              for (const hitbox of associatedHitboxes) {
+                hitscanParams.AddToFilter(hitbox)
+              }
+          }
+        }
+
+        hitscan = Workspace.Raycast(this.source.getCFrame().Position, finalDirection, hitscanParams);
+      }      
     } else {
       hitscan = Workspace.Blockcast(this.source.getCFrame(), this.size, finalDirection, hitscanParams);
-    }
 
-    if (!hitscan) return [];
+      while (hitscan) {
+        if (!hitscan) break;
 
-    const hitboxTags = hitscan.Instance.GetTags();
+        const hitboxTags = hitscan.Instance.GetTags();
 
-    for (const tag of hitboxTags) {
-      const tagSplit = tag.split(":");
+        for (const tag of hitboxTags) {
+          const tagSplit = tag.split(":");
 
-      if (tagSplit[0] === "hitboxedUUID") {
-        hitHitboxes.push(tagSplit[1]);
+          if (tagSplit[0] === "hitboxedUUID") {
+              hitHitboxes.push(tagSplit[1]);
+
+              const associatedHitboxes = CollectionService.GetTagged(`hitboxedUUID:${tagSplit[1]}`);
+
+              for (const hitbox of associatedHitboxes) {
+                hitscanParams.AddToFilter(hitbox)
+              }
+          }
+        }
+
+        hitscan = Workspace.Blockcast(this.source.getCFrame(), this.size, finalDirection, hitscanParams);
       }
     }
 
     task.spawn(() => {
-      this.onHit(hitHitboxes, this.source.getUuid());
+      this.hitscanFinished(hitHitboxes, this.source.getUuid());
     });
 
     return hitHitboxes;
