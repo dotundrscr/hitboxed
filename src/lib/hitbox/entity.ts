@@ -8,11 +8,13 @@ import { Hitbox } from "./base";
  * Should be used for Humanoids or parts that are supposed to take damage.
  */
 export class EntityHitbox extends Hitbox {
+  canCollide: boolean;
   size: Vector3;
   shape: Enum.PartType;
 
-  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType) {
+  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType, canCollide: boolean = false) {
     super(attachTo, attachOffset, hitscanOffset, owner);
+    this.canCollide = canCollide;
     this.size = size;
     this.shape = shape;
 
@@ -40,7 +42,7 @@ export class EntityHitbox extends Hitbox {
 
     hitboxInstance.CollisionGroup = "hitboxed";
 
-    hitboxInstance.CanCollide = false;
+    hitboxInstance.CanCollide = this.canCollide;
 
     hitboxInstance.AddTag("hitboxed-entity");
     hitboxInstance.AddTag(`hitboxedUUID:${this.getUuid()}`);
