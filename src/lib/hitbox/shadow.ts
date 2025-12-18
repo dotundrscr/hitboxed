@@ -64,7 +64,6 @@ export class ShadowHitbox extends Hitbox {
     hitboxInstance.Material = Enum.Material.SmoothPlastic;
     hitboxInstance.Color = new Color3(0.55, 0, 1);
     hitboxInstance.Transparency = 0.5;
-    hitboxInstance.LocalTransparencyModifier = 1;
 
     hitboxInstance.CollisionGroup = "hitboxed";
 

@@ -38,7 +38,6 @@ export class EntityHitbox extends Hitbox {
     hitboxInstance.Material = Enum.Material.SmoothPlastic;
     hitboxInstance.Color = new Color3(1, 0.69, 0);
     hitboxInstance.Transparency = 0.5;
-    hitboxInstance.LocalTransparencyModifier = 1;
 
     hitboxInstance.CollisionGroup = "hitboxed";
 
