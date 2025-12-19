@@ -6,25 +6,37 @@ import { Hitbox } from "./base";
 /**
  * Projectile Hitbox.
  * Used by the projectile attack type.
- * Destroyed automatically in 1 second.
+ * Destroyed automatically in 10 second *without a scan* by default.
+ * Destroyed automatically in 1 second *after a scan* by default.
  */
 export class ProjectileHitbox extends Hitbox {
+  protected selfDestructTask: thread;
+
   size: Vector3;
   shape: Enum.PartType;
 
-  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType) {
+  visibleOnlyInScan: boolean;
+  selfDestructAfterScan: boolean;
+  lifetimeAfterScan: number;
+
+  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType, lifetime: number = 10, visibleOnlyInScan: boolean = true, selfDestructAfterScan: boolean = true, lifetimeAfterScan: number = 1) {
     super(attachTo, attachOffset, hitscanOffset, owner);
 
     this.size = size;
     this.shape = shape;
+
+    this.visibleOnlyInScan = visibleOnlyInScan;
+    this.selfDestructAfterScan = selfDestructAfterScan;
+    this.lifetimeAfterScan = lifetimeAfterScan
 
     this.hitboxInstance = this._createInstance();
 
     this.hitboxInstance.Parent = this.attachTo;
     this.hitboxInstance.CFrame = this.attachTo.CFrame;
 
-    task.spawn(() => {
-        task.wait(1);
+    this.selfDestructTask = task.spawn(() => {
+        task.wait(lifetime);
+
         this.destroy();
     })
   }
@@ -46,7 +58,7 @@ export class ProjectileHitbox extends Hitbox {
 
     hitboxInstance.Material = Enum.Material.SmoothPlastic;
     hitboxInstance.Color = new Color3(0.55, 0.65, 1);
-    hitboxInstance.Transparency = 0.5;
+    hitboxInstance.Transparency = this.visibleOnlyInScan ? 1 : 0.5;
     hitboxInstance.LocalTransparencyModifier = 0;
 
     hitboxInstance.CollisionGroup = "hitboxed";
@@ -61,6 +73,10 @@ export class ProjectileHitbox extends Hitbox {
 
   getProjectileInstance(): Part {
     return this.hitboxInstance;
+  }
+
+  getSelfDestructTask(): thread {
+    return this.selfDestructTask;
   }
 
   /**

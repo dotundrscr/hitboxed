@@ -25,6 +25,10 @@ export class ProjectileAttack {
 
     const projectileInstance = this.projectile.getProjectileInstance()
 
+    if (this.projectile.visibleOnlyInScan) {
+      projectileInstance.Transparency = 0.5;
+    }
+
     const overlayParams = new OverlapParams();
     overlayParams.CollisionGroup = "hitboxed";
     overlayParams.FilterType = Enum.RaycastFilterType.Exclude;
@@ -58,6 +62,14 @@ export class ProjectileAttack {
 
     task.spawn(() => {
       this.projectileFinished(hitHitboxes, this.projectile.getUuid())
+
+      if (this.projectile.selfDestructAfterScan) {
+        task.cancel(this.projectile.getSelfDestructTask())
+        task.spawn(() => {
+          task.wait(this.projectile.lifetimeAfterScan);
+          this.projectile.destroy()
+        })
+      }
     })
 
     return hitHitboxes
