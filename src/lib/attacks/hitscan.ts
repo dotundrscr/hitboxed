@@ -59,25 +59,36 @@ export class HitscanAttack {
 	const offsetPositions = GetPositionsNTicksBehind(math.clamp(59-offsetTicks, 0, 59))
 	const offsetPlusOnePositions = GetPositionsNTicksBehind(math.clamp(59-offsetTicks+1, 0, 59))
 
-	for (const hitbox of offsetPositions) {
-		const plusOnePosition = offsetPlusOnePositions.get(hitbox[0])
+  if (offsetPositions && offsetPlusOnePositions) {
+    for (const hitbox of offsetPositions) {
+		  const plusOnePosition = offsetPlusOnePositions.get(hitbox[0])
 
-		if (!plusOnePosition) {
-			warn(`hitboxed: ${hitbox[0]} has invalid offset position`)
-			continue;
-		}
+  		if (!plusOnePosition) {
+		  	warn(`hitboxed: ${hitbox[0]} has invalid offset position`)
+			  continue;
+		  }
 
-		const resultPosition = hitbox[1].Lerp(plusOnePosition, tickProgress)
+  		const resultPosition = hitbox[1].Lerp(plusOnePosition, tickProgress)
 
-		const hitboxInstance = FindHitbox(hitbox[0]);
+  		const hitboxInstance = FindHitbox(hitbox[0]);
 	
-		if (!hitboxInstance) {
-			warn(`hitboxed: ${hitbox[0]} is invalid`)
-			continue;
-		}
+	  	if (!hitboxInstance) {
+			  warn(`hitboxed: ${hitbox[0]} is invalid`)
+			  continue;
+		  }
 
-		new ShadowHitbox(resultPosition, hitboxInstance as EntityHitbox);
-	}
+  		new ShadowHitbox(resultPosition, hitboxInstance as EntityHitbox);
+	  }
+  } else {
+    if (!offsetPlusOnePositions) {
+      warn("hitboxed: tried running a hitscan with lag compensation but no ticks were recorded. (wait for at least 2 ticks to be recorded before running scans)")
+    } else {
+      warn("hitboxed: tried running a hitscan with lag compensation but not enough ticks were recorded. (wait for at least 2 ticks to be recorded before running scans)")
+    }
+    
+  }
+
+	
 
     const finalDirection = this.direction.Unit.mul(this.length);
 

@@ -38,8 +38,18 @@ export function SavePositions() {
   LastNPositions.push(positions); 
 }
 
-export function GetPositionsNTicksBehind(ticksBehind: number): Map<string, CFrame> {
-  return LastNPositions[ticksBehind];
+export function GetPositionsNTicksBehind(ticksBehind: number): Map<string, CFrame> | undefined {
+  try {
+    return LastNPositions[ticksBehind]
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_) {
+    try {
+      return LastNPositions[LastNPositions.size() - 1]
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
+      return undefined;
+    }
+  }
 }
 
 export function StartSaving() {
