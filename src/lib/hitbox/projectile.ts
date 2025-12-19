@@ -1,0 +1,75 @@
+// Copyright (c) 2025 dotundrscr. Licensed under BSD 3-Clause "New" or "Revised" License.
+// For full terms, refer to the LICENSE file in the repository, or the SPDX License List.
+
+import { Hitbox } from "./base";
+
+/**
+ * Projectile Hitbox.
+ * Used by the projectile attack type.
+ * Destroyed automatically in 1 second.
+ */
+export class ProjectileHitbox extends Hitbox {
+  size: Vector3;
+  shape: Enum.PartType;
+
+  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType) {
+    super(attachTo, attachOffset, hitscanOffset, owner);
+
+    this.size = size;
+    this.shape = shape;
+
+    this.hitboxInstance = this._createInstance();
+
+    this.hitboxInstance.Parent = this.attachTo;
+    this.hitboxInstance.CFrame = this.attachTo.CFrame;
+
+    task.spawn(() => {
+        task.wait(1);
+        this.destroy();
+    })
+  }
+
+  /**
+   * Create a new instance of the hitbox.
+   *
+   * @protected DO NOT USE THIS FUNCTION DIRECTLY. This is a protected function in TypeScript, but still can be called in Luau.
+   */
+  protected _createInstance(): Part {
+    const hitboxInstance = new Instance("Part");
+
+    hitboxInstance.Name = "hitboxedProjectile";
+
+    hitboxInstance.Anchored = true;
+
+    hitboxInstance.Size = this.size;
+    hitboxInstance.Shape = this.shape;
+
+    hitboxInstance.Material = Enum.Material.SmoothPlastic;
+    hitboxInstance.Color = new Color3(0.55, 0.65, 1);
+    hitboxInstance.Transparency = 0.5;
+    hitboxInstance.LocalTransparencyModifier = 0;
+
+    hitboxInstance.CollisionGroup = "hitboxed";
+
+    hitboxInstance.CanCollide = false;
+
+    hitboxInstance.AddTag("hitboxed-projectile");
+    hitboxInstance.AddTag(`hitboxedUUID:${this.getUuid()}`);
+
+    return hitboxInstance;
+  }
+
+  getProjectileInstance(): Part {
+    return this.hitboxInstance;
+  }
+
+  /**
+   * Destroy the hitbox and it's attachment
+   */
+  destroy() {
+    this.hitboxInstance.Destroy();
+    this.attachmentInstance.Destroy();
+    this.constraint.Destroy();
+  } 
+
+}
