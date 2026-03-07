@@ -1,4 +1,4 @@
-// Copyright (c) 2025 dotundrscr. Licensed under BSD 3-Clause "New" or "Revised" License.
+// Copyright (c) 2026 dotundrscr. Licensed under BSD 3-Clause "New" or "Revised" License.
 // For full terms, refer to the LICENSE file in the repository, or the SPDX License List.
 
 // This is a setup script for hitboxed. Make sure it's in ServerScriptStorage.
