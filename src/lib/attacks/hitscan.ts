@@ -151,6 +151,8 @@ export class HitscanAttack {
 
       hitboxCollisionInstance.CFrame = this.source.getCFrame().mul(new CFrame(this.source.hitscanOffset));
 
+      hitboxCollisionInstance.CanCollide = false;
+
       hitboxCollisionInstance.CollisionGroup = "hitboxed";
       hitboxCollisionInstance.AddTag("hitboxed-collision");
 
