@@ -31,11 +31,11 @@ export class ShadowHitbox extends Hitbox {
     shadowPart.CanTouch = false;
     shadowPart.CanQuery = false;
 
-    shadowPart.Parent = Workspace
-    
+    shadowPart.Parent = Workspace;
+
     super(shadowPart, Vector3.zero, Vector3.zero, originalHitbox.owner);
 
-    this.shadowPart = shadowPart
+    this.shadowPart = shadowPart;
 
     this.originalHitbox = originalHitbox;
 
@@ -43,9 +43,9 @@ export class ShadowHitbox extends Hitbox {
     this._attach();
 
     task.spawn(() => {
-        task.wait(1);
-        this.destroy();
-    })
+      task.wait(1);
+      this.destroy();
+    });
   }
 
   /**
@@ -84,6 +84,5 @@ export class ShadowHitbox extends Hitbox {
     this.constraint.Destroy();
 
     this.shadowPart.Destroy();
-  } 
-
+  }
 }

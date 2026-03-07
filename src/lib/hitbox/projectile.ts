@@ -19,7 +19,18 @@ export class ProjectileHitbox extends Hitbox {
   selfDestructAfterScan: boolean;
   lifetimeAfterScan: number;
 
-  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType, lifetime: number = 10, visibleOnlyInScan: boolean = true, selfDestructAfterScan: boolean = true, lifetimeAfterScan: number = 1) {
+  constructor(
+    attachTo: BasePart,
+    attachOffset: Vector3,
+    hitscanOffset: Vector3,
+    owner: Model,
+    size: Vector3,
+    shape: Enum.PartType,
+    lifetime: number = 10,
+    visibleOnlyInScan: boolean = true,
+    selfDestructAfterScan: boolean = true,
+    lifetimeAfterScan: number = 1,
+  ) {
     super(attachTo, attachOffset, hitscanOffset, owner);
 
     this.size = size;
@@ -27,7 +38,7 @@ export class ProjectileHitbox extends Hitbox {
 
     this.visibleOnlyInScan = visibleOnlyInScan;
     this.selfDestructAfterScan = selfDestructAfterScan;
-    this.lifetimeAfterScan = lifetimeAfterScan
+    this.lifetimeAfterScan = lifetimeAfterScan;
 
     this.hitboxInstance = this._createInstance();
 
@@ -35,10 +46,10 @@ export class ProjectileHitbox extends Hitbox {
     this.hitboxInstance.CFrame = this.attachTo.CFrame;
 
     this.selfDestructTask = task.spawn(() => {
-        task.wait(lifetime);
+      task.wait(lifetime);
 
-        this.destroy();
-    })
+      this.destroy();
+    });
   }
 
   /**
@@ -86,6 +97,5 @@ export class ProjectileHitbox extends Hitbox {
     this.hitboxInstance.Destroy();
     this.attachmentInstance.Destroy();
     this.constraint.Destroy();
-  } 
-
+  }
 }

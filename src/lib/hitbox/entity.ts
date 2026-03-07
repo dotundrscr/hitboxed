@@ -12,7 +12,15 @@ export class EntityHitbox extends Hitbox {
   size: Vector3;
   shape: Enum.PartType;
 
-  constructor(attachTo: BasePart, attachOffset: Vector3, hitscanOffset: Vector3, owner: Model, size: Vector3, shape: Enum.PartType, canCollide: boolean = false) {
+  constructor(
+    attachTo: BasePart,
+    attachOffset: Vector3,
+    hitscanOffset: Vector3,
+    owner: Model,
+    size: Vector3,
+    shape: Enum.PartType,
+    canCollide: boolean = false,
+  ) {
     super(attachTo, attachOffset, hitscanOffset, owner);
     this.canCollide = canCollide;
     this.size = size;

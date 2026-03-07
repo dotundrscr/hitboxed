@@ -6,26 +6,26 @@ import { Hitbox } from "lib/hitbox/base";
 import { SaveLastNTicks } from "lib/lag/positions";
 
 export const ActiveHitboxes = new Map<string, Hitbox>();
-export const LastNPositions = new Array<Map<string, CFrame>>();
+export const LastNPositions: Map<string, CFrame>[] = [];
 
 export function StoreHitbox(hitbox: Hitbox) {
-	ActiveHitboxes.set(hitbox.getUuid(), hitbox);
+  ActiveHitboxes.set(hitbox.getUuid(), hitbox);
 }
 
 export function DeleteHitbox(uuid: string) {
-	ActiveHitboxes.delete(uuid);
+  ActiveHitboxes.delete(uuid);
 }
 
 export function GetHitboxes(): Map<string, Hitbox> {
-	return ActiveHitboxes;
+  return ActiveHitboxes;
 }
 
 export function FindHitbox(uuid: string): Hitbox | undefined {
-	return ActiveHitboxes.get(uuid);
+  return ActiveHitboxes.get(uuid);
 }
 
 export function SavePositions() {
-   if (LastNPositions.size() >= SaveLastNTicks) {
+  if (LastNPositions.size() >= SaveLastNTicks) {
     LastNPositions.shift();
   }
 
@@ -35,17 +35,17 @@ export function SavePositions() {
     positions.set(hitbox[0], hitbox[1].getCFrame());
   }
 
-  LastNPositions.push(positions); 
+  LastNPositions.push(positions);
 }
 
 export function GetPositionsNTicksBehind(ticksBehind: number): Map<string, CFrame> | undefined {
   try {
-    return LastNPositions[ticksBehind]
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return LastNPositions[ticksBehind];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
     try {
-      return LastNPositions[LastNPositions.size() - 1]
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      return LastNPositions[LastNPositions.size() - 1];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
       return undefined;
     }
@@ -53,7 +53,7 @@ export function GetPositionsNTicksBehind(ticksBehind: number): Map<string, CFram
 }
 
 export function StartSaving() {
-  SaveTask = RunService.Heartbeat.Connect(SavePositions)
+  SaveTask = RunService.Heartbeat.Connect(SavePositions);
 }
 
 export function StopSaving() {
