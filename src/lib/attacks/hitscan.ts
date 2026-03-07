@@ -1,7 +1,7 @@
 // Copyright (c) 2026 dotundrscr. Licensed under BSD 3-Clause "New" or "Revised" License.
 // For full terms, refer to the LICENSE file in the repository, or the SPDX License List.
 
-import { CollectionService, Players, Workspace } from "@rbxts/services";
+import { CollectionService, Debris, Players, Workspace } from "@rbxts/services";
 import { EntityHitbox } from "lib/hitbox/entity";
 import { ShadowHitbox } from "lib/hitbox/shadow";
 import { FindHitbox, GetPositionsNTicksBehind } from "lib/storage";
@@ -17,6 +17,8 @@ export class HitscanAttack {
   hitscanFinished: HitscanCallback;
 
   compensateLag: boolean;
+  showHitbox: boolean;
+  lifetimeAfterScan: number;
 
   constructor(
     source: EntityHitbox,
@@ -27,6 +29,8 @@ export class HitscanAttack {
     hitscanFinished: HitscanCallback,
 
     compensateLag: boolean = true,
+    showHitbox: boolean = true,
+    lifetimeAfterScan: number = 1,
   ) {
     this.source = source;
     this.direction = direction;
@@ -36,6 +40,8 @@ export class HitscanAttack {
     this.hitscanFinished = hitscanFinished;
 
     this.compensateLag = compensateLag;
+    this.showHitbox = showHitbox;
+    this.lifetimeAfterScan = lifetimeAfterScan;
   }
   scan(): string[] {
     let offsetTicks = 0;
@@ -91,24 +97,22 @@ export class HitscanAttack {
       }
     }
 
-    const finalDirection = this.direction.Unit.mul(this.length);
-
-    const hitscanParams = new RaycastParams();
-    hitscanParams.CollisionGroup = "hitboxed";
-    hitscanParams.FilterType = Enum.RaycastFilterType.Exclude;
-
     const sourceAssociatedHitboxes = CollectionService.GetTagged(`hitboxedUUID:${this.source.getUuid()}`);
 
-    for (const hitbox of sourceAssociatedHitboxes) {
-      hitscanParams.AddToFilter(hitbox);
-    }
-
-    let hitscan;
-
-    let hitHitboxes = []; // eslint-disable-line prefer-const
+    let hitHitboxes: string[] = []; // eslint-disable-line prefer-const
 
     if (!this.size) {
-      hitscan = Workspace.Raycast(this.source.getCFrame().Position, finalDirection, hitscanParams);
+      const finalDirection = this.direction.Unit.mul(this.length);
+
+      const hitscanParams = new RaycastParams();
+      hitscanParams.CollisionGroup = "hitboxed";
+      hitscanParams.FilterType = Enum.RaycastFilterType.Exclude;
+
+      for (const hitbox of sourceAssociatedHitboxes) {
+        hitscanParams.AddToFilter(hitbox);
+      }
+
+      let hitscan = Workspace.Raycast(this.source.getCFrame().Position, finalDirection, hitscanParams);
 
       while (hitscan) {
         if (!hitscan) break;
@@ -132,29 +136,51 @@ export class HitscanAttack {
         hitscan = Workspace.Raycast(this.source.getCFrame().Position, finalDirection, hitscanParams);
       }
     } else {
-      hitscan = Workspace.Blockcast(this.source.getCFrame(), this.size, finalDirection, hitscanParams);
+      const hitboxCollisionInstance = new Instance("Part");
 
-      while (hitscan) {
-        if (!hitscan) break;
+      hitboxCollisionInstance.Name = "hitboxedCollisionDetection";
 
-        const hitboxTags = hitscan.Instance.GetTags();
+      hitboxCollisionInstance.Anchored = true;
 
-        for (const tag of hitboxTags) {
+      hitboxCollisionInstance.Size = this.size;
+      hitboxCollisionInstance.Shape = Enum.PartType.Block;
+
+      hitboxCollisionInstance.Material = Enum.Material.SmoothPlastic;
+      hitboxCollisionInstance.Color = new Color3(0.95, 0.54, 0.66);
+      hitboxCollisionInstance.Transparency = 0.5;
+
+      hitboxCollisionInstance.CFrame = this.source.getCFrame().mul(new CFrame(this.source.hitscanOffset));
+
+      hitboxCollisionInstance.CollisionGroup = "hitboxed";
+      hitboxCollisionInstance.AddTag("hitboxed-collision");
+
+      hitboxCollisionInstance.Parent = Workspace;
+
+      const overlapParams = new OverlapParams();
+      overlapParams.CollisionGroup = "hitboxed";
+      overlapParams.FilterType = Enum.RaycastFilterType.Exclude;
+
+      for (const hitbox of sourceAssociatedHitboxes) {
+        overlapParams.AddToFilter(hitbox);
+      }
+
+      const overlappingParts = Workspace.GetPartsInPart(hitboxCollisionInstance, overlapParams);
+
+      for (const part of overlappingParts) {
+        const partTags = part.GetTags();
+
+        for (const tag of partTags) {
           const tagSplit = tag.split(":");
 
           if (tagSplit[0] === "hitboxedUUID") {
-            hitHitboxes.push(tagSplit[1]);
-
-            const associatedHitboxes = CollectionService.GetTagged(`hitboxedUUID:${tagSplit[1]}`);
-
-            for (const hitbox of associatedHitboxes) {
-              hitscanParams.AddToFilter(hitbox);
+            if (!hitHitboxes.includes(tagSplit[1])) {
+              hitHitboxes.push(tagSplit[1]);
             }
           }
         }
-
-        hitscan = Workspace.Blockcast(this.source.getCFrame(), this.size, finalDirection, hitscanParams);
       }
+
+      Debris.AddItem(hitboxCollisionInstance, this.lifetimeAfterScan);
     }
 
     task.spawn(() => {
